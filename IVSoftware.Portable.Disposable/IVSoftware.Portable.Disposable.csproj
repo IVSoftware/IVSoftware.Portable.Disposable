@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<VersionPrefix>1.1.1</VersionPrefix>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<Title>IVSoftware.Portable.Disposable</Title>
+		<Description>A simple and powerful reference counting mechanism.</Description>
+		<RootNamespace>IVSoftware.Portable</RootNamespace>
+		<Authors>IVSoftware, Thomas C. Gregor</Authors>
+		<Owner>IVSoftware LLC</Owner>
+		<Copyright>Copyright © 2023 IVSoftware LLC</Copyright>
+		<SignAssembly>True</SignAssembly>
+		<FileVersion>$(AssemblyVersion)</FileVersion>
+		<Version>$(AssemblyVersion)</Version>
+		<PackageProjectUrl>https://github.com/IVSoftware/IVSoftware.Portable.WatchdogTimer.git</PackageProjectUrl>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<PackageTags>idisposable;reference-counting;portable;net;android;ios</PackageTags>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+		<AssemblyOriginatorKeyFile>231201.ivs.pfx</AssemblyOriginatorKeyFile>
+		<DebugType>embedded</DebugType>
+	</PropertyGroup>
+	<ItemGroup>
+		<None Include="..\README.md">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+	</ItemGroup>
+
+</Project>
