@@ -62,7 +62,17 @@ class InstanceAwareControl : Control, IInstanceSpecific
 
 ___
 
-#### ObservableCollection&lt;T&gt; with Batch Updates
+### AutoObservableCollection&lt;T&gt; with Batch Updates
+
+This is a lighweight alternative to `System.Collections.ObjectModel.ObservableCollection` that encapsulates two improvements that just seem to keep coming up.
+
+1 - `NotifyCollectionResetEventArgs` that contains information on `OldItems` when the collection is cleared (e.g. for when the items themselves are `IDisposable` and need to be disposed). While things may have changed since this writing, the standard `CollectionChangedEvent` seems to have no information on the items that have been removed as a result of `Clear()`. 
+
+2 - Built-in `DisposableHost` using blocks where `CollectionChanged` events can be batched or entirely suppressed which can be handy when the number of items being added to a collection is large.
+
+___
+
+_Here's a short example of a batch `using` block to demonstrate how to use it._
 
 ```
 public AutoObservableCollection<MyObservableItem> DataSource { get; } = 
@@ -155,3 +165,72 @@ public void RunDemo()
 }
 ```
 
+**Analysis***
+
+The first block of input indicates that `CollectionChanged` has been fired in real time for every item that gets added to the collection.
+
+```text
+
+Elapsed 00:002
+CollectionChanged - Add: vivid
+
+Elapsed 00:017
+CollectionChanged - Add: radiant
+
+Elapsed 00:020
+CollectionChanged - Add: sapphire
+
+Elapsed 00:023
+CollectionChanged - Add: magnificent
+
+Elapsed 00:026
+CollectionChanged - Add: fiery
+
+Elapsed 00:028
+CollectionChanged - Add: splendid
+
+Elapsed 00:031
+CollectionChanged - Add: enchanting
+
+Elapsed 00:034
+CollectionChanged - Add: brilliant
+
+Elapsed 00:037
+CollectionChanged - Add: luminous
+
+Elapsed 00:041
+CollectionChanged - Add: vibrant
+```
+
+The second block demonstrates the verbosity of the `NotifyCollectionResetEventArgs` allowing enumeration of the items removed as a result of the call to `Clear()`.
+
+```text
+
+Elapsed 00:045
+CollectionChanged - Reset: vivid
+CollectionChanged - Reset: radiant
+CollectionChanged - Reset: sapphire
+CollectionChanged - Reset: magnificent
+CollectionChanged - Reset: fiery
+CollectionChanged - Reset: splendid
+CollectionChanged - Reset: enchanting
+CollectionChanged - Reset: brilliant
+CollectionChanged - Reset: luminous
+CollectionChanged - Reset: vibrant
+```
+
+The third block demonstrates that the `CollectionChanged` events that occurred during the `using` block have all been delivered en-masse when the scope of the block is exited.
+
+```text
+Batch Update @ Elapsed 00:059
+CollectionChangedBatch - Add: vivid
+CollectionChangedBatch - Add: radiant
+CollectionChangedBatch - Add: sapphire
+CollectionChangedBatch - Add: magnificent
+CollectionChangedBatch - Add: fiery
+CollectionChangedBatch - Add: splendid
+CollectionChangedBatch - Add: enchanting
+CollectionChangedBatch - Add: brilliant
+CollectionChangedBatch - Add: luminous
+CollectionChangedBatch - Add: vibrant
+```
