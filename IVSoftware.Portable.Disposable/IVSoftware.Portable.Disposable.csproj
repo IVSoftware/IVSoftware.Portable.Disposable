@@ -1,7 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<TargetFramework>netstandard2.0</TargetFramework>
-		<BaseVersion>1.1.4</BaseVersion>
+		
+		<!--Release Candidate-->
+		<BaseVersion>1.1.99</BaseVersion>
+		
 		<VersionPrefix>$(BaseVersion)</VersionPrefix>
 		<RepositoryUrl>https://github.com/IVSoftware/IVSoftware.Portable.Disposable.git</RepositoryUrl>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
