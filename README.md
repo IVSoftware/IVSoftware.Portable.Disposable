@@ -8,7 +8,7 @@ ___
 
 The Host object also functions as a Dictionary<string, object> during the lifetime of the disposable block.
 
-#####
+####
 Example 
 
 Suppose this windows application can have multiple virtual "instances" of MainForm that maintain their own state even though the database logic is shared. This allows UI elements that know which instance they should respond to.
@@ -164,7 +164,7 @@ public void RunDemo()
 }
 ```
 
-**Analysis***
+#### Analysis
 
 The first block of input indicates that `CollectionChanged` has been fired in real time for every item that gets added to the collection.
 
