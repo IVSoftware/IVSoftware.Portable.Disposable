@@ -2,6 +2,8 @@
 
 This flexible reference counting mechanism hosts `DisposableToken` objects, as well as an object dictionary for the lifetime of the `IDisposable` scope. It raises `BeginUsing` when count increments to 1, `FinalDispose` when count decrements to 0, and `CountChanged` when any movement occurs.
 
+___
+
 ### Canonical Example
 
 Get a WaitCursor for the duration of this operation and make sure it goes away when the operation completes.
