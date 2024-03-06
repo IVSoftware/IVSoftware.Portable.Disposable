@@ -2,14 +2,107 @@
 
 This flexible reference counting mechanism hosts `DisposableToken` objects, as well as an object dictionary for the lifetime of the `IDisposable` scope. It raises `BeginUsing` when count increments to 1, `FinalDispose` when count decrements to 0, and `CountChanged` when any movement occurs.
 
+### Canonical Example
+
+Get a WaitCursor for the duration of this operation and make sure it goes away when the operation completes.
+
+___
+
+_Before_
+
+Our good intentions are clear by the finally block that closes out the WaitCursor. It's not always easy to know that we're calling a subroutine that's going to do the same thing. And the bottom line in this case is that there's no wait cursor for the batch processing routine because single update has already killed it off before `UpdateAll` reaches it!!
+
+```
+async Task UpdateAll()
+{
+    try
+    {
+        UseWaitCursor = true;
+        for (int i = 0; i < 10; i++)
+        {
+            await UpdateSingle();
+        }
+        // Simulate long-running batch processing routine. Unfortunately,
+        // the SingleUpdate killed off the WaitCursor and now there's
+        //  no activity indication while this task runs!
+        await Task.Delay(TimeSpan.FromSeconds(10));
+    }
+    finally
+    {
+        UseWaitCursor = false;
+    }
+}
+async Task UpdateSingle()
+{
+    try
+    {
+        UseWaitCursor = true;
+        // Simulate long-running single update
+        await Task.Delay(TimeSpan.FromSeconds(1));
+    }
+    finally
+    {
+        UseWaitCursor = false;
+    }
+}
+```
+
+
+___
+
+_After_
+
+While it's not strictly necessary to make a singleton instance of DisposableHost, this can be a nice way to do it.
+
+```
+public DisposableHost DHostWaitCursor
+{
+    get
+    {
+        if (_dhostWaitCursor is null)
+        {
+            // Making an (optionally) named instance of DisposableHost on demand.
+            _dhostWaitCursor = new DisposableHost(nameof(DHostWaitCursor));
+            _dhostWaitCursor.BeginUsing += (sender, e) => UseWaitCursor = true;
+            _dhostWaitCursor.FinalDispose += (sender, e) => UseWaitCursor = false;
+        }
+        return _dhostWaitCursor;
+    }
+}
+private DisposableHost _dhostWaitCursor = null;
+
+async Task UpdateAll()
+{
+    using (DHostWaitCursor.GetToken())
+    {
+        for (int i = 0; i < 10; i++)
+        {
+            await UpdateSingle();
+        }
+        // Simulate long-running batch processing routine
+        // with a reference count of 1 (probably).
+        await Task.Delay(TimeSpan.FromSeconds(10));
+    }
+}
+async Task UpdateSingle()
+{
+    using (DHostWaitCursor.GetToken())
+    {
+        // Simulate long-running single update
+        // In this simple example, the reference count
+        // is bouncing back and forth between 1 and 2.
+        await Task.Delay(TimeSpan.FromSeconds(1));
+    }
+}
+```
+
 ___
 
 ### Dictionary
 
 The Host object also functions as a Dictionary<string, object> during the lifetime of the disposable block.
 
-####
-Example 
+#### Example 
 
 Suppose this windows application can have multiple virtual "instances" of MainForm that maintain their own state even though the database logic is shared. This allows UI elements that know which instance they should respond to.
 
