@@ -54,7 +54,7 @@ ___
 
 _After_
 
-While it's not strictly necessary to make a singleton instance of DisposableHost, this can be a nice way to do it.
+While it's not strictly necessary to make a singleton instance of DisposableHost, this can be a nice way to do it. In this case, when the singleton instantiates, it subscribes itself to the `UseWaitCursor` boolean. As tokens are checked out in methods (possibly scattered and possibly parallel) this keeps the activity indication alive until the reference count eventually goes back to Zero.
 
 ```
 public DisposableHost DHostWaitCursor
