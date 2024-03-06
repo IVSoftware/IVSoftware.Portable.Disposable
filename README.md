@@ -1,12 +1,12 @@
 ## Disposable Host
 
-This flexible reference counting mechanism hosts `DisposableToken` objects, as well as an object dictionary for the lifetime of the `IDisposable` object. It raises `BeginUsing` when count increments to 1 and `FinalDispose` when count decrements to 0 and `CountChanged` when any movement occurs.
+This flexible reference counting mechanism hosts `DisposableToken` objects, as well as an object dictionary for the lifetime of the `IDisposable` scope. It raises `BeginUsing` when count increments to 1, `FinalDispose` when count decrements to 0, and `CountChanged` when any movement occurs.
 
 ___
 
 ### Dictionary
 
-The Host object also functions as a Dictionary<string, object> during the disposable lifetime.
+The Host object also functions as a Dictionary<string, object> during the lifetime of the disposable block.
 
 ######
 Example 
@@ -56,15 +56,13 @@ class InstanceAwareControl : Control, IInstanceSpecific
     public MyAppInstanceClass Instance{ get; }
 }
 
-
-
 ```
 
 ___
 
 ### AutoObservableCollection&lt;T&gt; with Batch Updates
 
-This is a lighweight alternative to `System.Collections.ObjectModel.ObservableCollection` that encapsulates two improvements that just seem to keep coming up.
+This is a lighweight alternative to `System.Collections.ObjectModel.ObservableCollection`. It encapsulates two improvements that seemed to keep coming up, and opportunistically seemd like a good inclusion for this package since the reference counting was already on hand.
 
 1 - `NotifyCollectionResetEventArgs` that contains information on `OldItems` when the collection is cleared (e.g. for when the items themselves are `IDisposable` and need to be disposed). While things may have changed since this writing, the standard `CollectionChangedEvent` seems to have no information on the items that have been removed as a result of `Clear()`. 
 

@@ -6,7 +6,7 @@
 		<RepositoryUrl>https://github.com/IVSoftware/IVSoftware.Portable.Disposable.git</RepositoryUrl>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 		<Title>IVSoftware.Portable.Disposable</Title>
-		<Description>A simple and powerful reference counting mechanism.</Description>
+		<Description>Flexible reference counting.</Description>
 		<RootNamespace>IVSoftware.Portable</RootNamespace>
 		<Authors>IVSoftware, Thomas C. Gregor</Authors>
 		<Owner>IVSoftware LLC</Owner>
