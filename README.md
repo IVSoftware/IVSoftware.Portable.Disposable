@@ -19,6 +19,7 @@ public MainForm()
 {
     public static DisposableHost MyDHostInstance { get; } = new DisposableHost(nameof(MyDHostInstance);
 
+    // Create a disposable lifetime with an Instance reference in its dictionary.
     using(MyDHostInstance.GetToken(properties: new Dictionary<string, object)
     {
         { "InitializingInstance", this.Instance }
@@ -38,6 +39,7 @@ class InstanceAwareControl : Control, IInstanceSpecific
 {
     public InstanceAwareControl()
     {
+        // Detect the presence of the Instance reference in the dictionary and consume.
         if(MyDHostInstance.TryGetValue("InitializingInstance", out MyAppInstanceClass initializingInstance)
         {
             Instance = initializingInstance;
@@ -55,7 +57,6 @@ class InstanceAwareControl : Control, IInstanceSpecific
     }    
     public MyAppInstanceClass Instance{ get; }
 }
-
 ```
 
 ___
@@ -70,7 +71,7 @@ This is a lighweight alternative to `System.Collections.ObjectModel.ObservableCo
 
 ___
 
-_Here's a short example of a batch `using` block to demonstrate how to use it._
+_Here's a short example of a batch `using` block to demonstrate its usage._
 
 ```
 public AutoObservableCollection<MyObservableItem> DataSource { get; } = 
