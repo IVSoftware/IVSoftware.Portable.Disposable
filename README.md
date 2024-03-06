@@ -4,5 +4,11 @@ This flexible reference counting mechanism hosts `DisposableToken` objects, as w
 
 ___
 
+#### Dictionary
 
 The Host object also functions as a Dictionary<string, object> during the disposable lifetime.
+
+___
+
+#### ObservableCollection&lt;T&gt; with Batch Updates
+

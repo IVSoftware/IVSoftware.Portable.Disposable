@@ -142,6 +142,14 @@ namespace IVSoftware.Portable.Disposable
             public object Sender { get; } = DefaultSender;
             public DisposableToken(DisposableHost owner, object sender, Dictionary<string, object> properties)
             {
+                if(sender is Dictionary<string, object> theProperties && properties is null)
+                {
+                    // We have to assume that the intention was a token
+                    // with a dictionary where the sender is not specified.
+                    properties = theProperties;
+                    sender = null;
+                }
+
                 _owner = owner;
                 if (sender != null)
                 {

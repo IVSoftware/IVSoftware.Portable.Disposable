@@ -22,7 +22,7 @@ namespace IVSoftware.Portable.Disposable
     /// A good all around OSource class that can also be
     /// used for batch CollectionChanged events.
     /// </summary>
-    public class AutoObservableCollection<T> : IEnumerable<T>, INotifyCollectionChanged where T : IVisibleIndex
+    public class AutoObservableCollection<T> : IEnumerable<T>, INotifyCollectionChanged
     {
         public AutoObservableCollection() => BatchNotifyCollectionChanged.FinalDispose += onDisposeBatchNotifyCollectionChangedInternal;
 
@@ -55,11 +55,20 @@ namespace IVSoftware.Portable.Disposable
             {
                 var oldIndex = _items.IndexOf(item);
 
-                // If there is an existing item with a higher visible
-                // index,this item needs to go at the index before that item.
-                var nextItem = 
+                T nextItem;
+                if (item is IVisibleIndex viItem)
+                {
+                    // If there is an existing item with a higher visible
+                    // index,this item needs to go at the index before that item.
+
+                    nextItem = 
                     _items
-                    .FirstOrDefault(_ => _.VisibleIndex > item.VisibleIndex);
+                    .FirstOrDefault(_ =>_ is IVisibleIndex _vi && _vi.VisibleIndex > viItem.VisibleIndex);
+                }
+                else
+                {
+                    nextItem = default;
+                }
                 if(nextItem == null)
                 {
                     // If there are is no item with higher requested
@@ -204,7 +213,7 @@ namespace IVSoftware.Portable.Disposable
             NoNotifyCollectionChanged.GetToken(sender, properties);
     }
 
-    internal class NotifyCollectionResetEventArgs : NotifyCollectionChangedEventArgs
+    public class NotifyCollectionResetEventArgs : NotifyCollectionChangedEventArgs
     {
         public NotifyCollectionResetEventArgs(IList oldItems) : base(NotifyCollectionChangedAction.Reset)
         {

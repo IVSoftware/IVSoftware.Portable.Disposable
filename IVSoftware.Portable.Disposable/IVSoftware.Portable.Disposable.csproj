@@ -1,7 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<TargetFramework>netstandard2.0</TargetFramework>
-		<VersionPrefix>1.1.1</VersionPrefix>
+		<BaseVersion>1.1.4</BaseVersion>
+		<VersionPrefix>$(BaseVersion)</VersionPrefix>
+		<RepositoryUrl>https://github.com/IVSoftware/IVSoftware.Portable.Disposable.git</RepositoryUrl>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 		<Title>IVSoftware.Portable.Disposable</Title>
 		<Description>A simple and powerful reference counting mechanism.</Description>
@@ -12,7 +14,6 @@
 		<SignAssembly>True</SignAssembly>
 		<FileVersion>$(AssemblyVersion)</FileVersion>
 		<Version>$(AssemblyVersion)</Version>
-		<PackageProjectUrl>https://github.com/IVSoftware/IVSoftware.Portable.WatchdogTimer.git</PackageProjectUrl>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageTags>idisposable;reference-counting;portable;net;android;ios</PackageTags>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>

@@ -5,7 +5,9 @@ VisualStudioVersion = 17.6.33829.357
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IVSoftware.Portable.Disposable", "IVSoftware.Portable.Disposable\IVSoftware.Portable.Disposable.csproj", "{699BA7D4-6FE3-4082-845A-F17E12E0CD8C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "global-wait-cursor", "global-wait-cursor\global-wait-cursor.csproj", "{DB09548C-8B81-4688-9DFE-ABA7C23EFCCB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "global-wait-cursor", "global-wait-cursor\global-wait-cursor.csproj", "{DB09548C-8B81-4688-9DFE-ABA7C23EFCCB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "batch-update-demo", "batch-update-demo\batch-update-demo.csproj", "{E9E2DA74-2210-4505-A7A8-55284ABCA850}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{DB09548C-8B81-4688-9DFE-ABA7C23EFCCB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DB09548C-8B81-4688-9DFE-ABA7C23EFCCB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DB09548C-8B81-4688-9DFE-ABA7C23EFCCB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E9E2DA74-2210-4505-A7A8-55284ABCA850}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E9E2DA74-2210-4505-A7A8-55284ABCA850}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E9E2DA74-2210-4505-A7A8-55284ABCA850}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E9E2DA74-2210-4505-A7A8-55284ABCA850}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
