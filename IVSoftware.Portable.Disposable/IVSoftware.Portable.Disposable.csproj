@@ -3,7 +3,7 @@
 		<TargetFramework>netstandard2.0</TargetFramework>
 		
 		<!--Release Candidate-->
-		<BaseVersion>1.1.99</BaseVersion>
+		<BaseVersion>1.2.00</BaseVersion>
 		
 		<VersionPrefix>$(BaseVersion)</VersionPrefix>
 		<RepositoryUrl>https://github.com/IVSoftware/IVSoftware.Portable.Disposable.git</RepositoryUrl>

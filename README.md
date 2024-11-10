@@ -156,9 +156,176 @@ class InstanceAwareControl : Control, IInstanceSpecific
 
 ___
 
+### Inheritance
+
+This class is not sealed, and lends itself to specialization. Here's an application where local databases can be used for the duration of a single [TestMethod].
+
+
+```
+[TestClass]
+public class UnitTestSQLiteParser
+{
+    #region D H O S T    D I S P O S A B L E    D A T A B A S E S
+
+    private class DatabaseDisposableHost : DisposableHost
+    {
+        public DatabaseDisposableHost()
+        {
+            while (File.Exists(DisposableDatabasePathForTest))
+            {
+                try
+                {
+                    File.Delete(DisposableDatabasePathForTest);
+                }
+                catch (IOException)
+                {
+                    switch (
+                        MessageBox.Show(
+                            "Make sure database is not open in DB Browser, then click OK",
+                            "Deletion failed",
+                            MessageBoxButtons.OKCancel))
+                    {
+                        case DialogResult.OK:
+                            try
+                            {
+                                File.Delete(DisposableDatabasePathForTest);
+                            }
+                            catch (IOException)
+                            {
+                                Debug.WriteLine($"ADVISORY: Disposable database is still open in DB Browser for SQLite");
+                            }
+                            break;
+                        default:
+                        case DialogResult.Cancel:
+                            goto breakFromInner;
+                    }
+                }
+            }
+            breakFromInner:
+
+            // NuGet Disposable TODO:
+            // - ADD CTOR for default BeginUsing and FinalDispose.
+            // - ADD this[Enum] indexer.
+            // - ADD GetValue<T>(key, default); 
+
+            BeginUsing += (sender, e) =>
+            {
+                _onDisk = new SQLiteConnection(DisposableDatabasePathForTest);
+                _inMemory = new SQLiteConnection(":memory:");
+            };
+            FinalDispose += (sender, e) =>
+            {
+                InMemory.Dispose();
+                OnDisk.Dispose();
+                if (File.Exists(DisposableDatabasePathForTest))
+                {
+                    try
+                    {
+                        File.Delete(DisposableDatabasePathForTest);
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine($"ADVISORY: Disposable database is still open in DB Browser for SQLite");
+                    }
+                }
+            };
+        }
+        public SQLiteConnection InMemory => _inMemory ?? throw new NullReferenceException();
+        private SQLiteConnection? _inMemory = null;
+        public SQLiteConnection OnDisk => _onDisk ?? throw new NullReferenceException();
+        private SQLiteConnection? _onDisk = null;
+        public static string DisposableDatabasePathForTest
+        {
+            get
+            {
+                if (_databasePathForTest is null)
+                {
+                    _databasePathForTest = Path.Combine(
+                        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                        "IVSoftware",
+                        "Portable",
+                        "SQLiteMarkdown.MSTest",
+                        "disposable.db"
+                    );
+                }
+                if (_databasePathForTest is null) throw new NullReferenceException();
+                Directory.CreateDirectory(Path.GetDirectoryName(_databasePathForTest)!);
+                _databasePathForTest.ToClipboard();
+                return _databasePathForTest;
+            }
+        }
+        static string? _databasePathForTest = default;
+    }
+    DatabaseDisposableHost DHostDatabase
+    {
+        get
+        {
+            if (_dhostDatabase is null)
+            {
+                _dhostDatabase = new DatabaseDisposableHost();
+            }
+            return _dhostDatabase;
+        }
+    }
+    DatabaseDisposableHost? _dhostDatabase = default;
+    #endregion D H O S T    D I S P O S A B L E    D A T A B A S E S    
+
+    [TestMethod]
+    public void Test_UserIndexedModel()
+    {
+        using (DHostDatabase.GetToken())
+        {
+            var cnx = DHostDatabase.OnDisk;
+            string actual, expected, expr;
+            SelfIndexedProfile[] retrievedItems;
+            cnx.CreateTable<SelfIndexedProfile>();
+            var items = new SelfIndexedProfile[]
+            {
+                new SelfIndexedProfile
+                {
+                    FirstName = "Tom",
+                    LastName = "Tester",
+                    Tags = "C# .NET MAUI,C# WPF, C# WinForms".MakeTags(),
+                }
+            };
+            actual =
+                JsonConvert
+                .SerializeObject(items, Formatting.Indented)
+                .Replace(@"\r\n", string.Empty);
+            actual.ToClipboard();
+            actual.ToClipboardAssert();
+            { }
+            expected = @" 
+[
+    {
+    ""Id"": ""38CFE38E-0D90-4C9F-A4E5-845089CB2BB0"",
+    ""FirstName"": ""Tom"",
+    ""LastName"": ""Tester"",
+    ""Tags"": ""[c# .net maui][c# wpf][c# winforms]"",
+    ""PrimaryKey"": ""38CFE38E-0D90-4C9F-A4E5-845089CB2BB0"",
+    ""LikeTerm"": ""tom~tester"",
+    ""ContainsTerm"": ""tom~tester"",
+    ""TagMatchTerm"": ""c#&.net&maui~c#&wpf~c#&winforms"",
+    ""Properties"": ""{  \""FirstName\"": \""Tom\"",  \""LastName\"": \""Tester\"",  \""Tags\"": \""[c# .net maui][c# wpf][c# winforms]\""}""
+    }
+]
+".NormalizeResult();
+
+            Assert.AreEqual(
+                expected.NormalizeResult(),
+                actual.NormalizeResult(),
+                "Expecting values to match."
+            );
+        }
+    }
+}
+```
+
+___
+
 ### AutoObservableCollection&lt;T&gt; with Batch Updates
 
-This is a lightweight alternative to `System.Collections.ObjectModel.ObservableCollection`. It encapsulates two improvements that seemed to keep coming up, and opportunistically seemd like a good inclusion for this package since the reference counting was already on hand.
+This is a lightweight alternative to `System.Collections.ObjectModel.ObservableCollection`. It encapsulates two improvements that come up often, and opportunistically seemed like a good inclusion for this package since the reference counting was already on hand.
 
 1 - `NotifyCollectionResetEventArgs` that contains information on `OldItems` when the collection is cleared (e.g. for when the items themselves are `IDisposable` and need to be disposed). While things may have changed since this writing, the standard `CollectionChangedEvent` seems to have no information on the items that have been removed as a result of `Clear()`. 
 
